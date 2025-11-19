@@ -15,6 +15,7 @@ public class WalletService {
 
     private final WalletRepository walletRepository;
     private final UserRepository userRepository;
+    private final TransactionService transactionService;
 
     // Helper to get userId from email
     private Long getUserIdByEmail(String email) {
@@ -60,6 +61,7 @@ public class WalletService {
         }
         Wallet wallet = getWalletByUserId(userId);
         wallet.setBalance(wallet.getBalance().add(amount));
+        transactionService.recordTransaction(wallet.getId(), amount, "DEPOSIT", "Deposit of " + amount);
         return walletRepository.save(wallet);
     }
 
@@ -79,6 +81,7 @@ public class WalletService {
             throw new IllegalArgumentException("Insufficient funds");
         }
         wallet.setBalance(wallet.getBalance().subtract(amount));
+        transactionService.recordTransaction(wallet.getId(), amount, "WITHDRAW", "Withdrawal of " + amount);
         return walletRepository.save(wallet);
     }
 

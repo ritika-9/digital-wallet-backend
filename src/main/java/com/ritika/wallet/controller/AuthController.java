@@ -10,6 +10,7 @@ import com.ritika.wallet.security.JwtTokenUtil;
 import com.ritika.wallet.service.OtpService;
 import com.ritika.wallet.security.JwtUtil;
 import com.ritika.wallet.security.CustomUserDetailsService;
+import com.ritika.wallet.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,7 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final JwtTokenUtil jwtTokenUtil;
     private final CustomUserDetailsService userDetailsService;
+    private final WalletService walletService;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest request) {
@@ -52,6 +54,13 @@ public class AuthController {
 
         User savedUser = userRepository.save(user);
 
+        try {
+            walletService.getWalletByUserId(user.getId());
+            // Wallet exists, no need to create
+        } catch (IllegalArgumentException e) {
+            // Wallet not found, create one
+            walletService.createWalletForUser(user.getId());
+        }
         // Generate OTP
         String otp = otpService.generateOtpForUser(savedUser.getId());
 

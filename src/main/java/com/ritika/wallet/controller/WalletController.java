@@ -19,40 +19,66 @@ public class WalletController {
     // Get wallet by userId
     @GetMapping("/by-id/{userId}")
     public ResponseEntity<?> getWalletById(@PathVariable Long userId) {
-        return ResponseEntity.ok(walletService.getWalletByUserId(userId));
+        Wallet wallet = walletService.getWalletByUserId(userId);
+        return ResponseEntity.ok(Map.of(
+                "id", wallet.getId(),
+                "userId", wallet.getUserId(),
+                "balance", wallet.getBalance()
+        ));
     }
 
     // Get wallet by email
-    @GetMapping("/by-email/{email}")
+    @GetMapping("/by-email")
     public ResponseEntity<?> getWalletByEmail(@RequestParam String email) {
-        return ResponseEntity.ok(walletService.getWalletByEmail(email));
+        Wallet wallet = walletService.getWalletByEmail(email);
+        return ResponseEntity.ok(Map.of(
+                "walletId", wallet.getId(),
+                "userId", wallet.getUserId(),
+                "balance", wallet.getBalance()
+        ));
     }
 
     // Deposit by userId
     @PostMapping("/deposit-id/{userId}")
     public ResponseEntity<?> depositById(@PathVariable Long userId, @RequestParam BigDecimal amount) {
         Wallet wallet = walletService.deposit(userId, amount);
-        return ResponseEntity.ok(Map.of("message", "Deposit successful", "balance", wallet.getBalance()));
+        return ResponseEntity.ok(Map.of(
+                "message", "Deposit successful",
+                "walletId", wallet.getId(),
+                "balance", wallet.getBalance()
+        ));
     }
 
     // Deposit by email
-    @PostMapping("/deposit-email/{email}")
+    @PostMapping("/deposit-email")
     public ResponseEntity<?> depositByEmail(@RequestParam String email, @RequestParam BigDecimal amount) {
         Wallet wallet = walletService.deposit(email, amount);
-        return ResponseEntity.ok(Map.of("message", "Deposit successful", "balance", wallet.getBalance()));
+        return ResponseEntity.ok(Map.of(
+                "message", "Deposit successful",
+                "walletId", wallet.getId(),
+                "balance", wallet.getBalance()
+        ));
     }
 
     // Withdraw by userId
     @PostMapping("/withdraw-id/{userId}")
     public ResponseEntity<?> withdrawById(@PathVariable Long userId, @RequestParam BigDecimal amount) {
         Wallet wallet = walletService.withdraw(userId, amount);
-        return ResponseEntity.ok(Map.of("message", "Withdrawal successful", "balance", wallet.getBalance()));
+        return ResponseEntity.ok(Map.of(
+                "message", "Withdrawal successful",
+                "walletId", wallet.getId(),
+                "balance", wallet.getBalance()
+        ));
     }
 
     // Withdraw by email
-    @PostMapping("/withdraw-email/{email}")
+    @PostMapping("/withdraw-email")
     public ResponseEntity<?> withdrawByEmail(@RequestParam String email, @RequestParam BigDecimal amount) {
         Wallet wallet = walletService.withdraw(email, amount);
-        return ResponseEntity.ok(Map.of("message", "Withdrawal successful", "balance", wallet.getBalance()));
+        return ResponseEntity.ok(Map.of(
+                "message", "Withdrawal successful",
+                "walletId", wallet.getId(),
+                "balance", wallet.getBalance()
+        ));
     }
 }
